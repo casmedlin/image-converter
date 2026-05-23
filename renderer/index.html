@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+  <title>Image Converter & Optimizer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Title bar -->
+    <header id="titlebar">
+      <div id="titlebar-drag">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <span>Image Converter &amp; Optimizer</span>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main id="content">
+      <!-- Drop zone / Image grid -->
+      <section id="drop-zone" class="drop-zone">
+        <div id="drop-empty" class="drop-empty">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="drop-icon"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <h2>Drop images here</h2>
+          <p>or click to browse &bull; JPEG, PNG, WebP, AVIF, HEIC, TIFF, GIF, RAW</p>
+          <div class="drop-actions">
+            <button id="browse-btn" class="btn btn-primary">Browse Files</button>
+            <button id="folder-btn" class="btn btn-secondary">Open Folder</button>
+          </div>
+          <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/avif,image/tiff,image/gif,image/heic,image/heif" multiple hidden />
+        </div>
+        <div id="import-loading" class="import-loading hidden">
+          <div class="spinner-large"></div>
+          <p id="import-status">Importing images...</p>
+        </div>
+        <div id="image-grid" class="image-grid hidden"></div>
+      </section>
+
+      <!-- Bottom controls -->
+      <footer id="controls">
+        <div class="control-group">
+          <div class="control-row">
+            <div class="control-item">
+              <label for="scale-mode">Scale</label>
+              <select id="scale-mode">
+                <option value="original">Original</option>
+                <option value="percent" selected>Percent</option>
+                <option value="dimensions">Dimensions</option>
+              </select>
+            </div>
+            <div class="control-item" id="scale-value-group">
+              <label for="scale-percent">Value</label>
+              <div class="input-with-unit">
+                <input type="number" id="scale-percent" value="100" min="1" max="1000" />
+                <span class="unit">%</span>
+              </div>
+            </div>
+            <div class="control-item hidden" id="scale-dim-group">
+              <label>Dimensions</label>
+              <div class="dim-inputs">
+                <input type="number" id="scale-width" value="1920" min="1" placeholder="W" />
+                <span class="dim-sep">&times;</span>
+                <input type="number" id="scale-height" value="1080" min="1" placeholder="H" />
+              </div>
+            </div>
+          </div>
+          <div class="control-row">
+            <div class="control-item">
+              <label for="quality">Quality</label>
+              <div class="quality-control">
+                <input type="range" id="quality" min="1" max="100" value="85" />
+                <span id="quality-value">85</span>
+              </div>
+            </div>
+            <div class="control-item">
+              <label for="preset">Preset</label>
+              <select id="preset">
+                <option value="custom">Custom</option>
+                <optgroup label="Icons & Favicons">
+                  <option value="ios-icon">iOS App Icon</option>
+                  <option value="android-icon">Android Icon</option>
+                  <option value="mac-icon">macOS Icon</option>
+                  <option value="win-icon">Windows Icon</option>
+                  <option value="web-favicon">Web Favicon</option>
+                </optgroup>
+                <optgroup label="Social Media">
+                  <option value="insta-post">Instagram Post</option>
+                  <option value="insta-story">Instagram Story</option>
+                  <option value="fb-post">Facebook Post</option>
+                  <option value="fb-cover">Facebook Cover</option>
+                  <option value="x-post">Twitter/X Post</option>
+                  <option value="x-header">Twitter/X Header</option>
+                  <option value="linkedin-post">LinkedIn Post</option>
+                </optgroup>
+                <optgroup label="Web & SEO">
+                  <option value="webp-hero">WebP Hero (1080p)</option>
+                  <option value="webp-thumb">WebP Thumbnail</option>
+                  <option value="avif-mobile">AVIF Mobile</option>
+                </optgroup>
+                <optgroup label="Devices">
+                  <option value="hd-1080">Full HD (1080p)</option>
+                  <option value="uhd-4k">4K Ultra HD</option>
+                  <option value="iphone-15">iPhone 15/16</option>
+                </optgroup>
+                <optgroup label="Print & Standard">
+                  <option value="print-4x6">4x6 Photo</option>
+                  <option value="print-5x7">5x7 Photo</option>
+                  <option value="a4-doc">A4 Document</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="control-item">
+              <label for="format">Format</label>
+              <select id="format">
+                <option value="original">Original</option>
+                <option value="jpeg" selected>JPEG</option>
+                <option value="png">PNG</option>
+                <option value="webp">WebP</option>
+                <option value="avif">AVIF</option>
+                <option value="heic">HEIC</option>
+                <option value="tiff">TIFF</option>
+                <option value="gif">GIF</option>
+              </select>
+            </div>
+            <div class="control-item">
+              <label for="output-dir">Output</label>
+              <div class="output-dir-control">
+                <input type="text" id="output-dir" readonly placeholder="Same as input" />
+                <button id="browse-output" title="Browse output folder">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="control-item checkbox-item">
+              <label for="previews-toggle">Previews</label>
+              <label class="toggle">
+                <input type="checkbox" id="previews-toggle" checked />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">On</span>
+              </label>
+            </div>
+            <div class="control-item checkbox-item">
+              <label for="metadata-toggle">Metadata</label>
+              <label class="toggle">
+                <input type="checkbox" id="metadata-toggle" checked />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Keep</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-group">
+          <div id="stats" class="stats hidden">
+            <span id="stats-text">0 images</span>
+          </div>
+          <button id="clear-btn" class="btn btn-secondary hidden">Clear</button>
+          <button id="convert-btn" class="btn btn-primary" disabled>
+            <span id="convert-text">Convert</span>
+          </button>
+        </div>
+      </footer>
+
+      <!-- App footer with legal -->
+      <footer id="app-footer">
+        <span class="footer-email">info@casmedlin.com</span>
+        <span class="footer-sep">&middot;</span>
+        <a href="#" id="privacy-link">Privacy</a>
+        <span class="footer-sep">&middot;</span>
+        <a href="#" id="terms-link">Terms</a>
+        <span class="footer-sep">&middot;</span>
+        <a href="#" id="debug-link">Report Bug</a>
+      </footer>
+    </main>
+
+    <!-- Result overlay -->
+    <div id="result-overlay" class="overlay hidden">
+      <div class="overlay-content">
+        <div class="overlay-header">
+          <h2>Conversion Complete</h2>
+          <button id="close-result" class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div id="result-list" class="result-list"></div>
+        <div class="overlay-footer">
+          <button id="result-ok" class="btn btn-primary">Done</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Privacy overlay -->
+    <div id="privacy-overlay" class="overlay hidden">
+      <div class="overlay-content overlay-legal">
+        <div class="overlay-header">
+          <h2>Privacy Policy</h2>
+          <button id="close-privacy" class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="legal-scroll">
+          <p><strong>Effective Date:</strong> May 23, 2026</p>
+          <br/>
+          <p>Image Converter ("the App") is a desktop application that processes images entirely on your device. This Privacy Policy explains how we handle your information.</p>
+          <br/>
+          <p><strong>1. No Data Collection</strong></p>
+          <p>The App does not collect, store, transmit, or share any personal data, usage statistics, or analytics. All image processing occurs locally on your device. No images, metadata, or derived files are ever sent to any external server.</p>
+          <br/>
+          <p><strong>2. Local Processing Only</strong></p>
+          <p>All image conversion, resizing, and format transformation is performed using local system tools (macOS sips/ImageIO or Electron/Node.js libraries). The App has no network access and no cloud components.</p>
+          <br/>
+          <p><strong>3. Third-Party Services</strong></p>
+          <p>The App does not integrate any third-party analytics, advertising, or tracking services. It operates fully offline and does not require an internet connection.</p>
+          <br/>
+          <p><strong>4. Data Storage</strong></p>
+          <p>Temporary files created during processing are stored in your system's temporary directory and are deleted immediately after processing completes. Output files are saved only to the location you explicitly choose.</p>
+          <br/>
+          <p><strong>5. Changes to This Policy</strong></p>
+          <p>If this policy is updated, the effective date at the top will be revised. Continued use of the App constitutes acceptance of any changes.</p>
+          <br/>
+          <p><strong>6. Contact</strong></p>
+          <p>For questions about this policy: <a href="mailto:info@casmedlin.com">info@casmedlin.com</a></p>
+        </div>
+        <div class="overlay-footer">
+          <button id="privacy-ok" class="btn btn-primary">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Terms overlay -->
+    <div id="terms-overlay" class="overlay hidden">
+      <div class="overlay-content overlay-legal">
+        <div class="overlay-header">
+          <h2>Terms of Use</h2>
+          <button id="close-terms" class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="legal-scroll">
+          <p><strong>Effective Date:</strong> May 23, 2026</p>
+          <br/>
+          <p>By using Image Converter ("the App") you agree to the following terms.</p>
+          <br/>
+          <p><strong>1. License</strong></p>
+          <p>The App is provided as free software. You are granted a non-exclusive, non-transferable license to use the App for personal and commercial purposes. You may not distribute, modify, reverse-engineer, or sublicense the App without prior written consent.</p>
+          <br/>
+          <p><strong>2. Disclaimer of Warranty</strong></p>
+          <p>The App is provided "as is" without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. The entire risk as to the quality and performance of the App is with you.</p>
+          <br/>
+          <p><strong>3. Limitation of Liability</strong></p>
+          <p>In no event shall the author be liable for any damages (including, without limitation, lost profits, data loss, or business interruption) arising from the use or inability to use the App, even if advised of the possibility of such damages.</p>
+          <br/>
+          <p><strong>4. Use at Your Own Risk</strong></p>
+          <p>You are solely responsible for backing up your images before processing. The App processes files in-place only when you configure the output directory. Always verify settings before batch operations.</p>
+          <br/>
+          <p><strong>5. Governing Law</strong></p>
+          <p>These terms shall be governed by and construed in accordance with the laws of the State of California, without regard to its conflict of law provisions.</p>
+          <br/>
+          <p><strong>6. Contact</strong></p>
+          <p>For questions about these terms: <a href="mailto:info@casmedlin.com">info@casmedlin.com</a><br/>Bug reports: <a href="mailto:bug@casmedlin.com">bug@casmedlin.com</a></p>
+        </div>
+        <div class="overlay-footer">
+          <button id="terms-ok" class="btn btn-primary">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Debug report overlay -->
+    <div id="debug-overlay" class="overlay hidden">
+      <div class="overlay-content overlay-legal">
+        <div class="overlay-header">
+          <h2>Report a Bug</h2>
+          <button id="close-debug" class="btn-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="legal-scroll">
+          <p>Please include the following information in your bug report:</p>
+          <br/>
+          <ul>
+            <li>App version: <strong id="version-display">loading...</strong></li>
+            <li>macOS / Windows / Linux version</li>
+            <li>Steps to reproduce the issue</li>
+            <li>Any error messages shown</li>
+            <li>File formats involved</li>
+          </ul>
+          <br/>
+          <p>Send to: <a href="mailto:bug@casmedlin.com">bug@casmedlin.com</a></p>
+          <br/>
+          <p style="color: var(--text-muted); font-size: 12px;">General inquiries: <a href="mailto:info@casmedlin.com">info@casmedlin.com</a></p>
+        </div>
+        <div class="overlay-footer">
+          <button id="debug-ok" class="btn btn-primary">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

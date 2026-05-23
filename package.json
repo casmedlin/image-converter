@@ -1,0 +1,109 @@
+{
+  "name": "image-converter",
+  "version": "1.0.0",
+  "description": "Universal batch image converter & optimizer - resize, recompress, reformat",
+  "author": "Cas Medlin",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:mac": "electron-builder --mac",
+    "build:mac:arm": "electron-builder --mac --arm64",
+    "build:mac:universal": "electron-builder --mac --universal",
+    "build:linux": "electron-builder --linux",
+    "build:linux:arm": "electron-builder --linux --arm64",
+    "build:linux:rpi": "electron-builder --linux --armv7l",
+    "build:linux:snap": "electron-builder --linux snap",
+    "build:linux:flatpak": "electron-builder --linux flatpak",
+    "build:win": "electron-builder --win",
+    "build:win:arm": "electron-builder --win --arm64",
+    "build:all": "electron-builder --mac --linux --win"
+  },
+  "build": {
+    "appId": "com.imageconverter.app",
+    "productName": "Image Converter & Optimizer",
+    "executableName": "image-converter-optimizer",
+    "copyright": "Copyright © 2026 Cas Medlin",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "compression": "maximum",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "node_modules/sharp/**",
+      "node_modules/@img/**"
+    ],
+    "mac": {
+      "category": "public.app-category.graphics-design",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build-icon.png",
+      "identity": null,
+      "artifactName": "${productName}-${version}-mac-${arch}.${ext}",
+      "minimumSystemVersion": "11.0",
+      "fileAssociations": [
+        {
+          "ext": [
+            "png", "jpg", "jpeg", "webp", "avif", "heic", "heif", "tiff", "tif", "gif",
+            "arw", "srf", "sr2", "cr2", "cr3", "crw", "nef", "nrw", "raf", "rw2", "orf",
+            "pef", "dng", "x3f", "3fr", "rwl", "iiq", "mrw", "raw", "bay"
+          ],
+          "name": "Image",
+          "role": "Editor"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "snap",
+        "flatpak"
+      ],
+      "icon": "build/icons",
+      "category": "Graphics",
+      "artifactName": "${productName}-${version}-linux-${arch}.${ext}",
+      "synopsis": "Batch image converter & optimizer",
+      "description": "Convert, resize, and recompress images in batch"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "${productName}-${version}-win-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^30.0.0",
+    "electron-builder": "^24.13.3"
+  },
+  "dependencies": {
+    "sharp": "^0.33.4"
+  }
+}
