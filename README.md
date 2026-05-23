@@ -16,6 +16,8 @@ A cross-platform desktop app for batch image conversion, resizing, and optimizat
 - **Drag & drop** or folder import
 - **Privacy-first** — 100% offline, no data leaves your device
 
+![Screenshot](assets/screenshot.png)
+
 ## Downloads
 
 | Platform | Architecture | Link |
