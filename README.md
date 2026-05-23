@@ -1,5 +1,9 @@
 # Image Converter & Optimizer
 
+<p align="center">
+  <img src="assets/icon.png" width="128" alt="Image Converter & Optimizer icon" />
+</p>
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Platforms](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey)](https://github.com/casmedlin/image-converter/releases)
 
