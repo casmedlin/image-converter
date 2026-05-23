@@ -2,7 +2,7 @@
   "name": "image-converter",
   "version": "1.0.0",
   "description": "Universal batch image converter & optimizer - resize, recompress, reformat",
-  "author": "Cas Medlin",
+  "author": { "name": "Cas Medlin", "email": "info@casmedlin.com" },
   "license": "MIT",
   "main": "main.js",
   "scripts": {
