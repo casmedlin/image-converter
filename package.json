@@ -99,9 +99,7 @@
     "linux": {
       "target": [
         "AppImage",
-        "deb",
-        "snap",
-        "flatpak"
+        "deb"
       ],
       "icon": "build/icons",
       "category": "Graphics",
