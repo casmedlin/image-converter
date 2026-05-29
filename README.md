@@ -26,12 +26,12 @@ A cross-platform desktop app for batch image conversion, resizing, and optimizat
 
 | Platform | Architecture | Link |
 |----------|-------------|------|
-| macOS    | Intel       | [Image Converter & Optimizer-1.0.0-mac-x64.dmg](https://github.com/casmedlin/image-converter/releases/latest) |
-| macOS    | Apple Silicon | [Image Converter & Optimizer-1.0.0-mac-arm64.dmg](https://github.com/casmedlin/image-converter/releases/latest) |
-| Windows  | x64         | [Image Converter & Optimizer-1.0.0-win-x64.exe](https://github.com/casmedlin/image-converter/releases/latest) |
-| Windows  | ARM64       | [Image Converter & Optimizer-1.0.0-win-arm64.exe](https://github.com/casmedlin/image-converter/releases/latest) |
-| Linux    | x86_64      | [Image Converter & Optimizer-1.0.0-linux-x86_64.AppImage](https://github.com/casmedlin/image-converter/releases/latest) |
-| Linux    | ARM64       | [Image Converter & Optimizer-1.0.0-linux-arm64.AppImage](https://github.com/casmedlin/image-converter/releases/latest) |
+| Windows  | x64         | [image-converter-setup-1.2.0.exe](https://github.com/casmedlin/image-converter/releases/latest) |
+| Windows  | ARM64       | [image-converter-setup-1.2.0-arm64.exe](https://github.com/casmedlin/image-converter/releases/latest) |
+| macOS    | Intel       | [Image Converter & Optimizer-1.2.0-mac-x64.dmg](https://github.com/casmedlin/image-converter/releases/latest) |
+| macOS    | Apple Silicon | [Image Converter & Optimizer-1.2.0-mac-arm64.dmg](https://github.com/casmedlin/image-converter/releases/latest) |
+| Linux    | x86_64      | [image-converter-1.2.0-x86_64.AppImage](https://github.com/casmedlin/image-converter/releases/latest) |
+| Linux    | ARM64       | [image-converter-1.2.0-arm64.AppImage](https://github.com/casmedlin/image-converter/releases/latest) |
 
 ## Usage
 
