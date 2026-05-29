@@ -528,4 +528,55 @@ window.api.onOpenFiles(async (filePaths) => {
   addFiles(files);
 });
 
+// ─── Auto-updater ──────────────────────────────────────────────
+const updateBar = document.getElementById('update-bar');
+const updateMessage = document.getElementById('update-message');
+const updateAction = document.getElementById('update-action');
+const updateDismiss = document.getElementById('update-dismiss');
+
+window.api.onUpdateChecking(() => {
+  updateBar.classList.remove('hidden');
+  updateMessage.textContent = 'Checking for updates...';
+  updateAction.classList.add('hidden');
+});
+
+window.api.onUpdateAvailable((info) => {
+  updateBar.classList.remove('hidden');
+  updateMessage.textContent = `Update v${info.version} available`;
+  updateAction.textContent = 'Download';
+  updateAction.classList.remove('hidden');
+  updateAction.disabled = false;
+  updateAction.onclick = () => window.api.downloadUpdate();
+});
+
+window.api.onUpdateNotAvailable(() => {
+  updateBar.classList.add('hidden');
+});
+
+window.api.onUpdateError(() => {
+  updateBar.classList.add('hidden');
+});
+
+window.api.onUpdateDownloadProgress((data) => {
+  updateBar.classList.remove('hidden');
+  const pct = Math.round(data.percent);
+  updateMessage.textContent = `Downloading update... ${pct}%`;
+  updateAction.textContent = `${pct}%`;
+  updateAction.disabled = true;
+});
+
+window.api.onUpdateDownloaded((info) => {
+  updateBar.classList.remove('hidden');
+  updateMessage.textContent = `Update v${info.version} ready to install`;
+  updateAction.textContent = 'Install & Restart';
+  updateAction.disabled = false;
+  updateAction.onclick = () => window.api.installUpdate();
+});
+
+updateDismiss.addEventListener('click', () => {
+  updateBar.classList.add('hidden');
+});
+
+window.api.checkForUpdates();
+
 renderGrid();

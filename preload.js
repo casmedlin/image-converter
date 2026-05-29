@@ -16,4 +16,27 @@ contextBridge.exposeInMainWorld('api', {
   removeProgressListeners: () => {
     ipcRenderer.removeAllListeners('image-progress');
   },
+
+  // Auto-updater
+  checkForUpdates: () => ipcRenderer.invoke('check-for-updates'),
+  downloadUpdate: () => ipcRenderer.invoke('download-update'),
+  installUpdate: () => ipcRenderer.invoke('install-update'),
+  onUpdateChecking: (callback) => {
+    ipcRenderer.on('update-checking', () => callback());
+  },
+  onUpdateAvailable: (callback) => {
+    ipcRenderer.on('update-available', (_event, data) => callback(data));
+  },
+  onUpdateNotAvailable: (callback) => {
+    ipcRenderer.on('update-not-available', () => callback());
+  },
+  onUpdateError: (callback) => {
+    ipcRenderer.on('update-error', (_event, msg) => callback(msg));
+  },
+  onUpdateDownloadProgress: (callback) => {
+    ipcRenderer.on('update-download-progress', (_event, data) => callback(data));
+  },
+  onUpdateDownloaded: (callback) => {
+    ipcRenderer.on('update-downloaded', (_event, data) => callback(data));
+  },
 });

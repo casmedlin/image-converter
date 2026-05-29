@@ -1,8 +1,11 @@
 {
   "name": "image-converter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Universal batch image converter & optimizer - resize, recompress, reformat",
-  "author": { "name": "Cas Medlin", "email": "info@casmedlin.com" },
+  "author": {
+    "name": "Cas Medlin",
+    "email": "info@casmedlin.com"
+  },
   "license": "MIT",
   "main": "main.js",
   "scripts": {
@@ -52,15 +55,41 @@
         }
       ],
       "icon": "build-icon.png",
-      "identity": null,
       "artifactName": "${productName}-${version}-mac-${arch}.${ext}",
       "minimumSystemVersion": "11.0",
       "fileAssociations": [
         {
           "ext": [
-            "png", "jpg", "jpeg", "webp", "avif", "heic", "heif", "tiff", "tif", "gif",
-            "arw", "srf", "sr2", "cr2", "cr3", "crw", "nef", "nrw", "raf", "rw2", "orf",
-            "pef", "dng", "x3f", "3fr", "rwl", "iiq", "mrw", "raw", "bay"
+            "png",
+            "jpg",
+            "jpeg",
+            "webp",
+            "avif",
+            "heic",
+            "heif",
+            "tiff",
+            "tif",
+            "gif",
+            "arw",
+            "srf",
+            "sr2",
+            "cr2",
+            "cr3",
+            "crw",
+            "nef",
+            "nrw",
+            "raf",
+            "rw2",
+            "orf",
+            "pef",
+            "dng",
+            "x3f",
+            "3fr",
+            "rwl",
+            "iiq",
+            "mrw",
+            "raw",
+            "bay"
           ],
           "name": "Image",
           "role": "Editor"
@@ -97,6 +126,12 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "casmedlin",
+      "repo": "image-converter",
+      "releaseType": "release"
     }
   },
   "devDependencies": {
@@ -104,6 +139,7 @@
     "electron-builder": "^24.13.3"
   },
   "dependencies": {
+    "electron-updater": "^6.8.3",
     "sharp": "^0.33.4"
   }
 }

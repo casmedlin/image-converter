@@ -68,6 +68,40 @@ body {
   height: 100vh;
 }
 
+/* ─── Update notification bar ────────────────────────────────── */
+.update-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  background: var(--bg-tertiary);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  animation: fadeSlideIn 200ms ease;
+}
+
+.update-bar #update-message {
+  flex: 1;
+}
+
+.update-bar .btn-small {
+  padding: 4px 12px;
+  font-size: 11px;
+}
+
+.update-bar .btn-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--text-muted);
+}
+
+.update-bar .btn-icon:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
 /* ─── Title bar ──────────────────────────────────────────────── */
 #titlebar {
   display: flex;

@@ -3,6 +3,7 @@ const path = require('path');
 const fs = require('fs');
 const { execFile } = require('child_process');
 const sharp = require('sharp');
+const { autoUpdater } = require('electron-updater');
 
 // ─── Electron runtime optimizations ───────────────────────────
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
@@ -93,6 +94,8 @@ app.whenReady().then(() => {
     app.dock.setIcon(iconPath);
   }
   createWindow();
+  setupAutoUpdater();
+  setTimeout(() => autoUpdater.checkForUpdates(), 5000);
 });
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
@@ -309,7 +312,63 @@ async function processOneImage(img, settings) {
   }
 }
 
+// ─── Auto updater ──────────────────────────────────────────────
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
+
+function setupAutoUpdater() {
+  if (!mainWindow) return;
+
+  autoUpdater.on('checking-for-update', () => {
+    mainWindow.webContents.send('update-checking');
+  });
+
+  autoUpdater.on('update-available', (info) => {
+    mainWindow.webContents.send('update-available', {
+      version: info.version,
+      releaseDate: info.releaseDate,
+      releaseNotes: info.releaseNotes,
+    });
+  });
+
+  autoUpdater.on('update-not-available', () => {
+    mainWindow.webContents.send('update-not-available');
+  });
+
+  autoUpdater.on('error', (err) => {
+    mainWindow.webContents.send('update-error', err.message);
+  });
+
+  autoUpdater.on('download-progress', (progress) => {
+    mainWindow.webContents.send('update-download-progress', {
+      percent: progress.percent,
+      bytesPerSecond: progress.bytesPerSecond,
+      total: progress.total,
+      transferred: progress.transferred,
+    });
+  });
+
+  autoUpdater.on('update-downloaded', (info) => {
+    mainWindow.webContents.send('update-downloaded', {
+      version: info.version,
+      releaseDate: info.releaseDate,
+    });
+  });
+}
+
 // ─── IPC handlers ──────────────────────────────────────────────
+ipcMain.handle('check-for-updates', () => {
+  autoUpdater.checkForUpdates();
+});
+
+ipcMain.handle('download-update', () => {
+  autoUpdater.downloadUpdate();
+});
+
+ipcMain.handle('install-update', () => {
+  setImmediate(() => autoUpdater.quitAndInstall());
+});
+
 ipcMain.handle('select-output-dir', async () => {
   const r = await dialog.showOpenDialog(mainWindow, { properties: ['openDirectory'] });
   return r.canceled ? null : r.filePaths[0];
