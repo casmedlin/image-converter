@@ -27,15 +27,15 @@ jobs:
         run: npm ci
 
       - name: Build Windows (${{ matrix.arch }})
-        run: npx electron-builder --win --${{ matrix.arch }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win --${{ matrix.arch }} --publish=never
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
           name: windows-${{ matrix.arch }}
-          path: dist/*.exe
+          path: |
+            dist/*.exe
+            dist/*.exe.blockmap
           if-no-files-found: error
 
   build-macos:
@@ -54,15 +54,15 @@ jobs:
         run: npm ci
 
       - name: Build macOS (${{ matrix.arch }})
-        run: npx electron-builder --mac --${{ matrix.arch }}
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --mac --${{ matrix.arch }} --publish=never
 
       - name: Upload DMG
         uses: actions/upload-artifact@v4
         with:
           name: macos-${{ matrix.arch }}
-          path: dist/*.dmg
+          path: |
+            dist/*.dmg
+            dist/*.dmg.blockmap
           if-no-files-found: error
 
   build-linux:
@@ -78,15 +78,16 @@ jobs:
         run: npm ci
 
       - name: Build Linux
-        run: npx electron-builder --linux --x64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --linux --x64 --publish=never
 
       - name: Upload AppImage
         uses: actions/upload-artifact@v4
         with:
           name: linux-x64
-          path: dist/*.AppImage
+          path: |
+            dist/*.AppImage
+            dist/*.deb
+            dist/*.latest-linux.yml
           if-no-files-found: error
 
   release:
@@ -101,11 +102,37 @@ jobs:
         with:
           path: artifacts
 
+      - name: Generate release body
+        run: |
+          cat > release-body.md << 'EOF'
+          ## Image Converter & Optimizer v${{ github.ref_name }}
+
+          ### Downloads
+
+          | Platform | Architecture | File |
+          |----------|-------------|------|
+          | Windows | x64 | \`image-converter-setup-\${{ github.ref_name }}.exe\` |
+          | Windows | ARM64 | \`image-converter-setup-\${{ github.ref_name }}-arm64.exe\` |
+          | macOS | Intel | \`Image Converter & Optimizer-\${{ github.ref_name }}-mac-x64.dmg\` |
+          | macOS | Apple Silicon | \`Image Converter & Optimizer-\${{ github.ref_name }}-mac-arm64.dmg\` |
+          | Linux | x86_64 | \`image-converter-\${{ github.ref_name }}-x86_64.AppImage\` |
+
+          > All processing happens 100% offline. No data leaves your device.
+          EOF
+
       - name: Create release
         uses: softprops/action-gh-release@v2
         with:
           files: artifacts/**/*
-          body: |
-            See [README](https://github.com/${{ github.repository }}) for platform-specific downloads.
+          body_path: release-body.md
           draft: false
           prerelease: false
+
+      - name: Upload auto-update metadata
+        if: always()
+        run: |
+          for f in artifacts/**/latest-*.yml; do
+            [ -f "$f" ] && gh release upload ${{ github.ref_name }} "$f" --clobber
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
