@@ -133,8 +133,10 @@ const nonStandardExts = new Set([
 function requiresExternalDecode(ext) { return nonStandardExts.has(ext) && ext !== '.svg'; }
 
 // ─── Placeholder thumbnail ─────────────────────────────────────
+function escapeXml(s) { return s.replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;' })[c]); }
+
 async function placeholderThumbnail(_filePath, ext) {
-  const label = ext.replace('.', '').toUpperCase();
+  const label = escapeXml(ext.replace('.', '').toUpperCase());
   const svg = `<svg width="280" height="280" xmlns="http://www.w3.org/2000/svg">
     <rect width="280" height="280" rx="8" fill="#1a1a22" stroke="#2a2a35" stroke-width="1"/>
     <text x="140" y="140" text-anchor="middle" dominant-baseline="central"
@@ -279,7 +281,9 @@ async function syncCreationDate(sourcePath, targetPath) {
       await execFileAsync('SetFile', ['-d', dateStr, targetPath], 5000);
     } else if (process.platform === 'win32') {
       const dateStr = btime.toISOString().replace('T', ' ').split('.')[0];
-      const cmd = `(Get-Item '${targetPath}').CreationTime = '${dateStr}'`;
+      const escapedPath = targetPath.replace(/'/g, "''");
+      const escapedDate = dateStr.replace(/'/g, "''");
+      const cmd = `(Get-Item '${escapedPath}').CreationTime = Get-Date '${escapedDate}'`;
       await execFileAsync('powershell.exe', ['-Command', cmd], 5000);
     }
   } catch {}
